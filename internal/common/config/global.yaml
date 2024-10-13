@@ -1,0 +1,4 @@
+order:
+  service-name: order
+  server-to-run: http
+  http-addr: 127.0.0.1:8282
