@@ -12,4 +12,10 @@ stock:
   http-addr: 127.0.0.1:8283
   grpc-addr: 127.0.0.1:5003
 
+payment:
+  service-name: payment
+  server-to-run: http
+  http-addr: 127.0.0.1:8284
+  grpc-addr: 127.0.0.1:5004
+
 stripe-key: "${STRIPE_KEY}"
