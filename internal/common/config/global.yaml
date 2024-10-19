@@ -1,4 +1,5 @@
 fallback-grpc-addr: 127.0.0.1:3030
+dial-grpc-timeout: 10
 
 consul:
   addr: 127.0.0.1:8500
