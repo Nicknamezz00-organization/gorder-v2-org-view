@@ -8,7 +8,7 @@ import (
 func RunHTTPServer(serviceName string, wrapper func(router *gin.Engine)) {
 	addr := viper.Sub(serviceName).GetString("http-addr")
 	if addr == "" {
-		// TODO: Warning log
+		panic("empty http address")
 	}
 	RunHTTPServerOnAddr(addr, wrapper)
 }

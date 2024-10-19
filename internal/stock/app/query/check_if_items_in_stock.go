@@ -44,14 +44,14 @@ func (h checkIfItemsInStockHandler) Handle(ctx context.Context, query CheckIfIte
 	var res []*orderpb.Item
 	for _, i := range query.Items {
 		// TODO: 改成从数据库 or stripe 获取
-		priceId, ok := stub[i.ID]
+		priceID, ok := stub[i.ID]
 		if !ok {
-			priceId = stub["1"]
+			priceID = stub["1"]
 		}
 		res = append(res, &orderpb.Item{
 			ID:       i.ID,
 			Quantity: i.Quantity,
-			PriceID:  priceId,
+			PriceID:  priceID,
 		})
 	}
 	return res, nil
