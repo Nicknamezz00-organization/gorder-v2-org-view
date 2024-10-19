@@ -6,14 +6,15 @@ replace github.com/Nicknamezz00/gorder-v2/common => ../common
 
 require (
 	github.com/Nicknamezz00/gorder-v2/common v0.0.0-00010101000000-000000000000
-	github.com/armon/go-metrics v0.4.1
 	github.com/gin-gonic/gin v1.9.1
 	github.com/rabbitmq/amqp091-go v1.10.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/viper v1.19.0
+	github.com/stripe/stripe-go/v79 v79.12.0
 )
 
 require (
+	github.com/armon/go-metrics v0.4.1 // indirect
 	github.com/bytedance/sonic v1.10.0-rc3 // indirect
 	github.com/chenzhuoyu/base64x v0.0.0-20230717121745-296ad89f973d // indirect
 	github.com/chenzhuoyu/iasm v0.9.0 // indirect
