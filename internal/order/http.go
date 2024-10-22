@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/Nicknamezz00/gorder-v2/common/genproto/orderpb"
+	client "github.com/Nicknamezz00/gorder-v2/common/client/order"
 	"github.com/Nicknamezz00/gorder-v2/common/tracing"
 	"github.com/Nicknamezz00/gorder-v2/order/app"
 	"github.com/Nicknamezz00/gorder-v2/order/app/command"
@@ -20,7 +20,7 @@ func (H HTTPServer) PostCustomerCustomerIDOrders(c *gin.Context, customerID stri
 	ctx, span := tracing.Start(c, "PostCustomerCustomerIDOrders")
 	defer span.End()
 
-	var req orderpb.CreateOrderRequest
+	var req client.CreateOrderRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
