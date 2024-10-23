@@ -7,6 +7,7 @@ import (
 	client "github.com/Nicknamezz00/gorder-v2/common/client/order"
 	"github.com/Nicknamezz00/gorder-v2/order/app"
 	"github.com/Nicknamezz00/gorder-v2/order/app/command"
+	"github.com/Nicknamezz00/gorder-v2/order/app/dto"
 	"github.com/Nicknamezz00/gorder-v2/order/app/query"
 	"github.com/Nicknamezz00/gorder-v2/order/convertor"
 	"github.com/gin-gonic/gin"
@@ -20,12 +21,8 @@ type HTTPServer struct {
 func (H HTTPServer) PostCustomerCustomerIDOrders(c *gin.Context, customerID string) {
 	var (
 		req  client.CreateOrderRequest
+		resp dto.CreateOrderResponse
 		err  error
-		resp struct {
-			CustomerID  string `json:"customer_id"`
-			OrderID     string `json:"order_id"`
-			RedirectURL string `json:"redirect_url"`
-		}
 	)
 	defer func() {
 		H.Response(c, err, &resp)
@@ -41,9 +38,11 @@ func (H HTTPServer) PostCustomerCustomerIDOrders(c *gin.Context, customerID stri
 	if err != nil {
 		return
 	}
-	resp.CustomerID = req.CustomerId
-	resp.RedirectURL = fmt.Sprintf("http://localhost:8282/success?customerID=%s&orderID=%s", req.CustomerId, r.OrderID)
-	resp.OrderID = r.OrderID
+	resp = dto.CreateOrderResponse{
+		OrderID:     r.OrderID,
+		CustomerID:  req.CustomerId,
+		RedirectURL: fmt.Sprintf("http://localhost:8282/success?customerID=%s&orderID=%s", req.CustomerId, r.OrderID),
+	}
 }
 
 func (H HTTPServer) GetCustomerCustomerIDOrdersOrderID(c *gin.Context, customerID string, orderID string) {
