@@ -9,6 +9,7 @@ import (
 	"github.com/Nicknamezz00/gorder-v2/order/app"
 	"github.com/Nicknamezz00/gorder-v2/order/app/command"
 	"github.com/Nicknamezz00/gorder-v2/order/app/query"
+	"github.com/Nicknamezz00/gorder-v2/order/convertor"
 	"github.com/gin-gonic/gin"
 )
 
@@ -27,7 +28,7 @@ func (H HTTPServer) PostCustomerCustomerIDOrders(c *gin.Context, customerID stri
 	}
 	r, err := H.app.Commands.CreateOrder.Handle(ctx, command.CreateOrder{
 		CustomerID: req.CustomerID,
-		Items:      req.Items,
+		Items:      convertor.NewItemWithQuantityConvertor().ClientsToEntities(req.Items),
 	})
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{"error": err})
