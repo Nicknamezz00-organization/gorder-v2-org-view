@@ -3,6 +3,7 @@ package broker
 import (
 	"context"
 	"fmt"
+	"time"
 
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/sirupsen/logrus"
@@ -10,8 +11,14 @@ import (
 )
 
 const (
-	DLX = "dlx"
-	DLQ = "dlq"
+	DLX                = "dlx"
+	DLQ                = "dlq"
+	amqpRetryHeaderKey = "x-retry-count"
+)
+
+var (
+	//maxRetryCount = viper.GetInt64("rabbitmq.max-retry")
+	maxRetryCount int64 = 3
 )
 
 func Connect(user, password, host, port string) (*amqp.Channel, func() error) {
@@ -53,6 +60,36 @@ func createDLX(ch *amqp.Channel) error {
 	}
 	_, err = ch.QueueDeclare(DLQ, true, false, false, false, nil)
 	return err
+}
+
+func HandleRetry(ctx context.Context, ch *amqp.Channel, d *amqp.Delivery) error {
+	if d.Headers == nil {
+		d.Headers = amqp.Table{}
+	}
+	retryCount, ok := d.Headers[amqpRetryHeaderKey].(int64)
+	if !ok {
+		retryCount = 0
+	}
+	retryCount++
+	d.Headers[amqpRetryHeaderKey] = retryCount
+
+	if retryCount >= maxRetryCount {
+		logrus.Infof("moving message %s to dlq", d.MessageId)
+		return ch.PublishWithContext(ctx, "", DLQ, false, false, amqp.Publishing{
+			Headers:      d.Headers,
+			ContentType:  "application/json",
+			Body:         d.Body,
+			DeliveryMode: amqp.Persistent,
+		})
+	}
+	logrus.Infof("retring message %s, count=%d", d.MessageId, retryCount)
+	time.Sleep(time.Second * time.Duration(retryCount))
+	return ch.PublishWithContext(ctx, d.Exchange, d.RoutingKey, false, false, amqp.Publishing{
+		Headers:      d.Headers,
+		ContentType:  "application/json",
+		Body:         d.Body,
+		DeliveryMode: amqp.Persistent,
+	})
 }
 
 type RabbitMQHeaderCarrier map[string]interface{}
