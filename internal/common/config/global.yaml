@@ -32,5 +32,14 @@ rabbitmq:
   port: 5672
   max-retry: 3
 
+mongo:
+  user: root
+  password: password
+  host: 127.0.0.1
+  port: 27017
+  db-name: "order"
+  coll-name: "order"
+
+
 stripe-key: "${STRIPE_KEY}"
 endpoint-stripe-secret: "${ENDPOINT_STRIPE_SECRET}"

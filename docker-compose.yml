@@ -23,3 +23,23 @@ services:
       - "4317:4317"
     environment:
       COLLECTOR_OTLP_ENABLED: true
+
+  order-mongo:
+    image: "mongo:7.0.8"
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: password
+    ports:
+      - "27017:27017"
+
+  mongo-express:
+    image: "mongo-express"
+    restart: always
+    ports:
+      - "8082:8081"
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: password
+      ME_CONFIG_MONGODB_URL: mongodb://root:password@order-mongo:27017/
+      ME_CONFIG_BASICAUTH: false
