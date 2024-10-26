@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"time"
 
+	_ "github.com/Nicknamezz00/gorder-v2/common/config"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"go.opentelemetry.io/otel"
 )
 
@@ -17,8 +19,7 @@ const (
 )
 
 var (
-	//maxRetryCount = viper.GetInt64("rabbitmq.max-retry")
-	maxRetryCount int64 = 3
+	maxRetryCount = viper.GetInt64("rabbitmq.max-retry")
 )
 
 func Connect(user, password, host, port string) (*amqp.Channel, func() error) {
@@ -63,6 +64,7 @@ func createDLX(ch *amqp.Channel) error {
 }
 
 func HandleRetry(ctx context.Context, ch *amqp.Channel, d *amqp.Delivery) error {
+	logrus.Info("handleretry_max-retry-count", maxRetryCount)
 	if d.Headers == nil {
 		d.Headers = amqp.Table{}
 	}
