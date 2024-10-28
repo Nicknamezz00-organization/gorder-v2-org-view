@@ -277,7 +277,7 @@ type ClientWithResponsesInterface interface {
 type PostCustomerCustomerIdOrdersResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *Order
+	JSON200      *Response
 	JSONDefault  *Error
 }
 
@@ -300,7 +300,7 @@ func (r PostCustomerCustomerIdOrdersResponse) StatusCode() int {
 type GetCustomerCustomerIdOrdersOrderIdResponse struct {
 	Body         []byte
 	HTTPResponse *http.Response
-	JSON200      *Order
+	JSON200      *Response
 	JSONDefault  *Error
 }
 
@@ -361,7 +361,7 @@ func ParsePostCustomerCustomerIdOrdersResponse(rsp *http.Response) (*PostCustome
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest Order
+		var dest Response
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}
@@ -394,7 +394,7 @@ func ParseGetCustomerCustomerIdOrdersOrderIdResponse(rsp *http.Response) (*GetCu
 
 	switch {
 	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
-		var dest Order
+		var dest Response
 		if err := json.Unmarshal(bodyBytes, &dest); err != nil {
 			return nil, err
 		}

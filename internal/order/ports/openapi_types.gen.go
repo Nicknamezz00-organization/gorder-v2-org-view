@@ -37,5 +37,13 @@ type Order struct {
 	Status      string `json:"status"`
 }
 
+// Response defines model for Response.
+type Response struct {
+	Data    map[string]interface{} `json:"data"`
+	Errno   int                    `json:"errno"`
+	Message string                 `json:"message"`
+	TraceId string                 `json:"trace_id"`
+}
+
 // PostCustomerCustomerIdOrdersJSONRequestBody defines body for PostCustomerCustomerIdOrders for application/json ContentType.
 type PostCustomerCustomerIdOrdersJSONRequestBody = CreateOrderRequest
