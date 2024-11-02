@@ -1,12 +1,13 @@
 package ports
 
 import (
-	context "context"
+	"context"
 
 	"github.com/Nicknamezz00/gorder-v2/common/genproto/stockpb"
 	"github.com/Nicknamezz00/gorder-v2/common/tracing"
 	"github.com/Nicknamezz00/gorder-v2/stock/app"
 	"github.com/Nicknamezz00/gorder-v2/stock/app/query"
+	"github.com/Nicknamezz00/gorder-v2/stock/convertor"
 )
 
 type GRPCServer struct {
@@ -32,12 +33,14 @@ func (G GRPCServer) CheckIfItemsInStock(ctx context.Context, request *stockpb.Ch
 	_, span := tracing.Start(ctx, "CheckIfItemsInStock")
 	defer span.End()
 
-	items, err := G.app.Queries.CheckIfItemsInStock.Handle(ctx, query.CheckIfItemsInStock{Items: request.Items})
+	items, err := G.app.Queries.CheckIfItemsInStock.Handle(ctx, query.CheckIfItemsInStock{
+		Items: convertor.NewItemWithQuantityConvertor().ProtosToEntities(request.Items),
+	})
 	if err != nil {
 		return nil, err
 	}
 	return &stockpb.CheckIfItemsInStockResponse{
 		InStock: 1,
-		Items:   items,
+		Items:   convertor.NewItemConvertor().EntitiesToProtos(items),
 	}, nil
 }
