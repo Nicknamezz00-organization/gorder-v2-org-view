@@ -13,6 +13,16 @@ type MemoryStockRepository struct {
 	store map[string]*entity.Item
 }
 
+func (m MemoryStockRepository) GetStock(ctx context.Context, ids []string) ([]*entity.ItemWithQuantity, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func (m MemoryStockRepository) UpdateStock(ctx context.Context, data []*entity.ItemWithQuantity, updateFn func(ctx context.Context, existing []*entity.ItemWithQuantity, query []*entity.ItemWithQuantity) ([]*entity.ItemWithQuantity, error)) error {
+	//TODO implement me
+	panic("implement me")
+}
+
 var stub = map[string]*entity.Item{
 	"item_id": {
 		ID:       "foo_item",

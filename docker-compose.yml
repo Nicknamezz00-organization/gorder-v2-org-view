@@ -61,6 +61,15 @@ services:
     ports:
       - "3000:3000"
 
+  redis:
+    image: redis:latest
+    restart: on-failure
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./data/redis_data:/data
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+
   mysql:
     image: mysql
     restart: on-failure
@@ -71,6 +80,6 @@ services:
       - MYSQL_PASSWORD=password
     volumes:
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-      - ./mysql_data:/var/lib/mysql
+      - ./data/mysql_data:/var/lib/mysql
     ports:
       - "3307:3306"

@@ -31,4 +31,5 @@ go.work.sum
 **/tmp/
 **/bin/
 
+data
 mysql_data

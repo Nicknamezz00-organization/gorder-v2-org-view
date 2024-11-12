@@ -11,6 +11,15 @@ import (
 type Repository interface {
 	GetItems(ctx context.Context, ids []string) ([]*entity.Item, error)
 	GetStock(ctx context.Context, ids []string) ([]*entity.ItemWithQuantity, error)
+	UpdateStock(
+		ctx context.Context,
+		data []*entity.ItemWithQuantity,
+		updateFn func(
+			ctx context.Context,
+			existing []*entity.ItemWithQuantity,
+			query []*entity.ItemWithQuantity,
+		) ([]*entity.ItemWithQuantity, error),
+	) error
 }
 
 type NotFoundError struct {

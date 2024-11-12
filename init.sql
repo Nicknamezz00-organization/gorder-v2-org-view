@@ -10,3 +10,6 @@ CREATE TABLE `o_stock` (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT INTO o_stock (product_id, quantity)
+VALUES ('prod_R3g7MikGYsXKzr', 1000), ('prod_R285C3Wb7FDprc', 500);
