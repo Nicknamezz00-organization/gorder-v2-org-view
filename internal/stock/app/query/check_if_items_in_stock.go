@@ -10,6 +10,7 @@ import (
 	domain "github.com/Nicknamezz00/gorder-v2/stock/domain/stock"
 	"github.com/Nicknamezz00/gorder-v2/stock/entity"
 	"github.com/Nicknamezz00/gorder-v2/stock/infrastructure/integration"
+	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 )
 
@@ -58,7 +59,7 @@ var stub = map[string]string{
 
 func (h checkIfItemsInStockHandler) Handle(ctx context.Context, query CheckIfItemsInStock) ([]*entity.Item, error) {
 	if err := lock(ctx, getLockKey(query)); err != nil {
-		return nil, err
+		return nil, errors.Wrapf(err, "redis lock error: key=%s", getLockKey(query))
 	}
 	defer func() {
 		if err := unlock(ctx, getLockKey(query)); err != nil {
@@ -78,7 +79,6 @@ func (h checkIfItemsInStockHandler) Handle(ctx context.Context, query CheckIfIte
 			PriceID:  priceID,
 		})
 	}
-	// TODO: 扣库存
 	if err := h.checkStock(ctx, query.Items); err != nil {
 		return nil, err
 	}
