@@ -1,11 +1,12 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/Nicknamezz00/gorder-v2/common"
 	client "github.com/Nicknamezz00/gorder-v2/common/client/order"
+	"github.com/Nicknamezz00/gorder-v2/common/consts"
+	"github.com/Nicknamezz00/gorder-v2/common/handler/errors"
 	"github.com/Nicknamezz00/gorder-v2/order/app"
 	"github.com/Nicknamezz00/gorder-v2/order/app/command"
 	"github.com/Nicknamezz00/gorder-v2/order/app/dto"
@@ -30,9 +31,11 @@ func (H HTTPServer) PostCustomerCustomerIdOrders(c *gin.Context, customerID stri
 	}()
 
 	if err = c.ShouldBindJSON(&req); err != nil {
+		err = errors.NewWithError(consts.ErrnoBindRequestError, err)
 		return
 	}
 	if err = H.validate(req); err != nil {
+		err = errors.NewWithError(consts.ErrnoRequestValidateError, err)
 		return
 	}
 	r, err := H.app.Commands.CreateOrder.Handle(c.Request.Context(), command.CreateOrder{
@@ -40,6 +43,7 @@ func (H HTTPServer) PostCustomerCustomerIdOrders(c *gin.Context, customerID stri
 		Items:      convertor.NewItemWithQuantityConvertor().ClientsToEntities(req.Items),
 	})
 	if err != nil {
+		//err = errors.NewWithError()
 		return
 	}
 	resp = dto.CreateOrderResponse{
@@ -72,7 +76,7 @@ func (H HTTPServer) GetCustomerCustomerIdOrdersOrderId(c *gin.Context, customerI
 func (H HTTPServer) validate(req client.CreateOrderRequest) error {
 	for _, v := range req.Items {
 		if v.Quantity <= 0 {
-			return errors.New("quantity must be positive")
+			return fmt.Errorf("quantity must be positive, got %d from %s", v.Quantity, v.Id)
 		}
 	}
 	return nil
