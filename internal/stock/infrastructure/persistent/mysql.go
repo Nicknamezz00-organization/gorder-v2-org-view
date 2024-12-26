@@ -39,6 +39,7 @@ type StockModel struct {
 	ID        int64     `gorm:"column:id"`
 	ProductID string    `gorm:"column:product_id"`
 	Quantity  int32     `gorm:"column:quantity"`
+	Version   int64     `gorm:"column:version"`
 	CreatedAt time.Time `gorm:"column:created_at autoCreateTime"`
 	UpdateAt  time.Time `gorm:"column:updated_at autoUpdateTime"`
 }
