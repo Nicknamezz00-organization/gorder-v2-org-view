@@ -31,7 +31,7 @@ func NewMySQL() *MySQL {
 	if err != nil {
 		logrus.Panicf("connect to mysql failed, err=%v", err)
 	}
-	//db.Callback().Create().Before("gorm:create").Register("set_create_time", func(d *gorm.DB) {
+	//db.Callback().Create().Before("gorm:create").Register("set_create_time", func(d *gorm.UseTransaction) {
 	//	d.Statement.SetColumn("CreatedAt", time.Now().Format(time.DateTime))
 	//})
 	return &MySQL{db: db}
@@ -59,14 +59,32 @@ func (m *StockModel) BeforeCreate(tx *gorm.DB) (err error) {
 	return nil
 }
 
+func (d *MySQL) UseTransaction(tx *gorm.DB) *gorm.DB {
+	if tx == nil {
+		return d.db
+	}
+	return tx
+}
+
 func (d MySQL) StartTransaction(fc func(tx *gorm.DB) error) error {
 	return d.db.Transaction(fc)
+}
+
+func (d MySQL) GetStockByID(ctx context.Context, query *builder.Stock) (*StockModel, error) {
+	_, deferLog := logging.WhenMySQL(ctx, "GetStockByID", query)
+	var result StockModel
+	tx := query.Fill(d.db.WithContext(ctx)).First(&result)
+	defer deferLog(result, &tx.Error)
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+	return &result, nil
 }
 
 func (d MySQL) BatchGetStockByID(ctx context.Context, query *builder.Stock) ([]StockModel, error) {
 	_, deferLog := logging.WhenMySQL(ctx, "BatchGetStockByID", query)
 	var result []StockModel
-	tx := query.Fill(d.db.WithContext(ctx).Clauses(clause.Returning{}).Find(&result))
+	tx := query.Fill(d.db.WithContext(ctx)).Find(&result)
 	defer deferLog(result, &tx.Error)
 	if tx.Error != nil {
 		return nil, tx.Error
@@ -74,10 +92,18 @@ func (d MySQL) BatchGetStockByID(ctx context.Context, query *builder.Stock) ([]S
 	return result, nil
 }
 
-func (d MySQL) Create(ctx context.Context, create *StockModel) error {
+func (d MySQL) Update(ctx context.Context, tx *gorm.DB, cond *builder.Stock, update map[string]any) error {
+	_, deferLog := logging.WhenMySQL(ctx, "BatchUpdateStock", cond)
+	var returning StockModel
+	res := cond.Fill(d.UseTransaction(tx).WithContext(ctx).Model(&returning).Clauses(clause.Returning{})).Updates(update)
+	defer deferLog(returning, &res.Error)
+	return res.Error
+}
+
+func (d MySQL) Create(ctx context.Context, tx *gorm.DB, create *StockModel) error {
 	_, deferLog := logging.WhenMySQL(ctx, "Create", create)
 	var returning StockModel
-	err := d.db.WithContext(ctx).Model(&returning).Clauses(clause.Returning{}).Create(create).Error
+	err := d.UseTransaction(tx).WithContext(ctx).Model(&returning).Clauses(clause.Returning{}).Create(create).Error
 	defer deferLog(returning, &err)
 	return err
 }
