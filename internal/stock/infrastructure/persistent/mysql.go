@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/Nicknamezz00/gorder-v2/common/logging"
+	"github.com/Nicknamezz00/gorder-v2/stock/infrastructure/persistent/builder"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
@@ -62,10 +63,10 @@ func (d MySQL) StartTransaction(fc func(tx *gorm.DB) error) error {
 	return d.db.Transaction(fc)
 }
 
-func (d MySQL) BatchGetStockByID(ctx context.Context, productIDs []string) ([]StockModel, error) {
-	_, deferLog := logging.WhenMySQL(ctx, "BatchGetStockByID", productIDs)
+func (d MySQL) BatchGetStockByID(ctx context.Context, query *builder.Stock) ([]StockModel, error) {
+	_, deferLog := logging.WhenMySQL(ctx, "BatchGetStockByID", query)
 	var result []StockModel
-	tx := d.db.WithContext(ctx).Clauses(clause.Returning{}).Where("product_id IN ?", productIDs).Find(&result)
+	tx := query.Fill(d.db.WithContext(ctx).Clauses(clause.Returning{}).Find(&result))
 	defer deferLog(result, &tx.Error)
 	if tx.Error != nil {
 		return nil, tx.Error

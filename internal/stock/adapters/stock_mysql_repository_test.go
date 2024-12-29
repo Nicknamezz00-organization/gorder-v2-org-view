@@ -10,6 +10,7 @@ import (
 	_ "github.com/Nicknamezz00/gorder-v2/common/config"
 	"github.com/Nicknamezz00/gorder-v2/stock/entity"
 	"github.com/Nicknamezz00/gorder-v2/stock/infrastructure/persistent"
+	"github.com/Nicknamezz00/gorder-v2/stock/infrastructure/persistent/builder"
 	"github.com/spf13/viper"
 
 	"github.com/stretchr/testify/assert"
@@ -95,7 +96,7 @@ func TestMySQLStockRepository_UpdateStock_Race(t *testing.T) {
 	}
 
 	wg.Wait()
-	res, err := db.BatchGetStockByID(ctx, []string{testItem})
+	res, err := db.BatchGetStockByID(ctx, builder.NewStock().ProductIDs(testItem))
 	assert.NoError(t, err)
 	assert.NotEmpty(t, res, "res cannot be empty")
 
@@ -152,7 +153,7 @@ func TestMySQLStockRepository_UpdateStock_OverSell(t *testing.T) {
 	}
 
 	wg.Wait()
-	res, err := db.BatchGetStockByID(ctx, []string{testItem})
+	res, err := db.BatchGetStockByID(ctx, builder.NewStock().ProductIDs(testItem))
 	assert.NoError(t, err)
 	assert.NotEmpty(t, res, "res cannot be empty")
 
