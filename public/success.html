@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Gorder</title>
+</head>
+<body>
+<section>
+  <p>
+    您已成功下单！
+  </p>
+  <p>
+    订单状态：<span id="orderStatus">等待中...</span>
+  </p>
+  <div class="ready-popup">
+    <p>您的订单正在处理中...</p>
+    <p style="color:burlywood; margin:12px">
+      订单号：<b><span id="orderID"></span></b>
+    </p>
+
+    <button class="close-btn" onclick="document.querySelector('.ready-popup').style.display = 'none'">
+      关闭
+    </button>
+  </div>
+
+  <div class="after-payment-popup">
+    <p>等待支付中...</p>
+    <a id="payment-link" href="#">去支付</a>
+  </div>
+</section>
+</body>
+
+<style>
+  html {
+      margin: 0;
+      padding: 0;
+      background-color: antiquewhite;
+      color: darkblue;
+  }
+
+  section {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+  }
+
+  .ready-popup {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 20px;
+      background-color: cadetblue;
+      z-index: 1;
+      border: 2px solid black;
+      border-radius: 5px;
+  }
+
+  .ready-popup p {
+      margin: 0;
+  }
+
+  .after-payment-popup {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 20px;
+      background-color: cadetblue;
+      z-index: 1;
+      border: 2px solid black;
+      border-radius: 5px;
+  }
+
+  .after-payment-popup p {
+      margin: 0;
+  }
+  .after-payment-popup a {
+      color: white;
+      margin-top: 10px;
+      padding: 5px 10px;
+      background-color: green;
+      border-radius: 5px;
+      text-decoration: none;
+  }
+
+  .close-btn {
+      margin-top: 10px;
+      padding: 5px 10px;
+      background-color: green;
+      border-radius: 5px;
+      border: none;
+      cursor: pointer;
+  }
+</style>
+
+<script>
+  const urlParam = new URLSearchParams(window.location.search);
+  const customerID = urlParam.get('customerID');
+  const orderID = urlParam.get('orderID');
+  const order = {
+      customerID,
+      orderID,
+      status: 'pending'
+  };
+  const getOrder = async() => {
+      const res = await fetch(`/api/customer/${customerID}/orders/${orderID}`);
+      const data = await res.json();
+      console.log("data = ", data)
+
+      /*
+      {
+        "code": 0,
+        "message": "success",
+        "data": {
+          ...
+        }
+      }
+       */
+      if (data.data.status === 'waiting_for_payment') {
+          order.status = '等待支付...';
+          document.getElementById('orderStatus').innerText = order.status;
+          document.querySelector('.after-payment-popup').style.display = 'block';
+          document.getElementById('payment-link').href = data.data.payment_link;
+      }
+      if (data.data.status === 'paid') {
+          order.status = '已支付成功，请等待...';
+          document.getElementById('orderStatus').innerText = order.status;
+          setTimeout(getOrder, 5000);
+      } else if (data.data.status === 'ready') {
+          order.status = '已完成...';
+          document.querySelector('.after-payment-popup').style.display = 'none';
+          document.querySelector('.ready-popup').style.display = 'block';
+          document.getElementById('orderID').innerText = orderID;
+          document.getElementById('orderStatus').innerText = order.status;
+      } else {
+          setTimeout(getOrder, 5000);
+      }
+  }
+  getOrder();
+</script>
+</html>
