@@ -1,0 +1,63 @@
+fallback-grpc-addr: 127.0.0.1:3030
+dial-grpc-timeout: 10
+
+jaeger:
+  url: "http://127.0.0.1:14268/api/traces"
+
+consul:
+  addr: 127.0.0.1:8500
+
+order:
+  service-name: order
+  server-to-run: http
+  http-addr: 127.0.0.1:8282
+  grpc-addr: 127.0.0.1:5002
+
+stock:
+  service-name: stock
+  server-to-run: grpc
+  http-addr: 127.0.0.1:8283
+  grpc-addr: 127.0.0.1:5003
+
+payment:
+  service-name: payment
+  server-to-run: http
+  http-addr: 127.0.0.1:8284
+  grpc-addr: 127.0.0.1:5004
+
+rabbitmq:
+  user: guest
+  password: guest
+  host: 127.0.0.1
+  port: 5672
+  max-retry: 3
+
+mongo:
+  user: root
+  password: password
+  host: 127.0.0.1
+  port: 27017
+  db-name: "order"
+  coll-name: "order"
+
+redis:
+  local:
+    ip: 127.0.0.1
+    port: 6379
+    pool_size: 100
+    max_conn: 100
+    conn_timeout: 1000
+    read_timeout: 1000
+    write_timeout: 100
+
+
+mysql:
+  user: root
+  password: root
+  host: localhost
+  port: 3307
+  dbname: "gorder_v2"
+
+
+stripe-key: "${STRIPE_KEY}"
+endpoint-stripe-secret: "${ENDPOINT_STRIPE_SECRET}"
