@@ -7,6 +7,7 @@ replace github.com/Nicknamezz00/gorder-v2/common => ../common
 require (
 	github.com/Nicknamezz00/gorder-v2/common v0.0.0-00010101000000-000000000000
 	github.com/gin-gonic/gin v1.10.0
+	github.com/pkg/errors v0.9.1
 	github.com/rabbitmq/amqp091-go v1.10.0
 	github.com/sirupsen/logrus v1.8.1
 	github.com/spf13/viper v1.19.0

@@ -38,10 +38,9 @@ func WhenRequest(ctx context.Context, method string, args ...any) (logrus.Fields
 	}
 }
 
-func WhenEventPublish(ctx context.Context, method string, args ...any) (logrus.Fields, func(any, *error)) {
+func WhenEventPublish(ctx context.Context, args ...any) (logrus.Fields, func(any, *error)) {
 	fields := logrus.Fields{
-		Method: method,
-		Args:   formatArgs(args),
+		Args: formatArgs(args),
 	}
 	start := time.Now()
 	return fields, func(resp any, err *error) {

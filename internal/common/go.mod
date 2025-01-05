@@ -7,6 +7,7 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware v1.4.0
 	github.com/hashicorp/consul/api v1.28.2
 	github.com/oapi-codegen/runtime v1.1.1
+	github.com/pkg/errors v0.9.1
 	github.com/rabbitmq/amqp091-go v1.10.0
 	github.com/redis/go-redis/v9 v9.7.0
 	github.com/sirupsen/logrus v1.8.1

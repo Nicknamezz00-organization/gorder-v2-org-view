@@ -25,6 +25,9 @@ payment:
   http-addr: 127.0.0.1:8284
   grpc-addr: 127.0.0.1:5004
 
+kitchen:
+  service-name: kitchen
+
 rabbitmq:
   user: guest
   password: guest

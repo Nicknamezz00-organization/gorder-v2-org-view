@@ -6,6 +6,7 @@ import (
 	"time"
 
 	_ "github.com/Nicknamezz00/gorder-v2/common/config"
+	"github.com/Nicknamezz00/gorder-v2/common/logging"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
@@ -63,8 +64,13 @@ func createDLX(ch *amqp.Channel) error {
 	return err
 }
 
-func HandleRetry(ctx context.Context, ch *amqp.Channel, d *amqp.Delivery) error {
-	logrus.Info("handleretry_max-retry-count", maxRetryCount)
+func HandleRetry(ctx context.Context, ch *amqp.Channel, d *amqp.Delivery) (err error) {
+	fields, dLog := logging.WhenRequest(ctx, "HandleRetry", map[string]any{
+		"delivery":        d,
+		"max_retry_count": maxRetryCount,
+	})
+	defer dLog(nil, &err)
+
 	if d.Headers == nil {
 		d.Headers = amqp.Table{}
 	}
@@ -74,19 +80,20 @@ func HandleRetry(ctx context.Context, ch *amqp.Channel, d *amqp.Delivery) error 
 	}
 	retryCount++
 	d.Headers[amqpRetryHeaderKey] = retryCount
+	fields["retry_count"] = retryCount
 
 	if retryCount >= maxRetryCount {
-		logrus.Infof("moving message %s to dlq", d.MessageId)
-		return ch.PublishWithContext(ctx, "", DLQ, false, false, amqp.Publishing{
+		logrus.WithContext(ctx).Infof("moving message %s to dlq", d.MessageId)
+		return doPublish(ctx, ch, "", DLQ, false, false, amqp.Publishing{
 			Headers:      d.Headers,
 			ContentType:  "application/json",
 			Body:         d.Body,
 			DeliveryMode: amqp.Persistent,
 		})
 	}
-	logrus.Infof("retring message %s, count=%d", d.MessageId, retryCount)
+	logrus.WithContext(ctx).Debugf("retring message %s, count=%d", d.MessageId, retryCount)
 	time.Sleep(time.Second * time.Duration(retryCount))
-	return ch.PublishWithContext(ctx, d.Exchange, d.RoutingKey, false, false, amqp.Publishing{
+	return doPublish(ctx, ch, "", DLQ, false, false, amqp.Publishing{
 		Headers:      d.Headers,
 		ContentType:  "application/json",
 		Body:         d.Body,
