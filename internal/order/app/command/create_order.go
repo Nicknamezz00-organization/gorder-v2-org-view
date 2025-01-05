@@ -7,6 +7,7 @@ import (
 
 	"github.com/Nicknamezz00/gorder-v2/common/broker"
 	"github.com/Nicknamezz00/gorder-v2/common/decorator"
+	"github.com/Nicknamezz00/gorder-v2/common/logging"
 	"github.com/Nicknamezz00/gorder-v2/order/app/query"
 	"github.com/Nicknamezz00/gorder-v2/order/convertor"
 	domain "github.com/Nicknamezz00/gorder-v2/order/domain/order"
@@ -63,6 +64,9 @@ func NewCreateOrderHandler(
 }
 
 func (c createOrderHandler) Handle(ctx context.Context, cmd CreateOrder) (*CreateOrderResult, error) {
+	var err error
+	defer logging.WhenCommandExecute(ctx, "CreateOrderHandler", cmd, err)
+
 	q, err := c.channel.QueueDeclare(broker.EventOrderCreated, true, false, false, false, nil)
 	if err != nil {
 		return nil, err

@@ -14,7 +14,7 @@ const (
 	Args     = "args"
 	Cost     = "cost_ms"
 	Response = "response"
-	Error    = "err"
+	Error    = "error"
 )
 
 type ArgFormatter interface {
@@ -24,7 +24,7 @@ type ArgFormatter interface {
 func WhenMySQL(ctx context.Context, method string, args ...any) (logrus.Fields, func(any, *error)) {
 	fields := logrus.Fields{
 		Method: method,
-		Args:   formatMySQLArgs(args),
+		Args:   formatArgs(args),
 	}
 	start := time.Now()
 	return fields, func(resp any, err *error) {
@@ -37,19 +37,19 @@ func WhenMySQL(ctx context.Context, method string, args ...any) (logrus.Fields, 
 			fields[Error] = (*err).Error()
 		}
 
-		logrus.WithContext(ctx).WithFields(fields).Logf(level, "%s", msg)
+		logf(ctx, level, fields, "%s", msg)
 	}
 }
 
-func formatMySQLArgs(args []any) string {
+func formatArgs(args []any) string {
 	var item []string
 	for _, arg := range args {
-		item = append(item, formatMySQLArg(arg))
+		item = append(item, formatArg(arg))
 	}
 	return strings.Join(item, "||")
 }
 
-func formatMySQLArg(arg any) string {
+func formatArg(arg any) string {
 	var (
 		str string
 		err error
