@@ -116,10 +116,7 @@ func packItems(items []*entity.ItemWithQuantity) []*entity.ItemWithQuantity {
 	}
 	var res []*entity.ItemWithQuantity
 	for id, quantity := range merged {
-		res = append(res, &entity.ItemWithQuantity{
-			ID:       id,
-			Quantity: quantity,
-		})
+		res = append(res, entity.NewItemWithQuantity(id, quantity))
 	}
 	return res
 }

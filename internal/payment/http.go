@@ -83,13 +83,13 @@ func (h *PaymentHandler) handleWebhook(c *gin.Context) {
 				Routing:  broker.FanOut,
 				Queue:    "",
 				Exchange: broker.EventOrderPaid,
-				Body: &entity.Order{
-					ID:          session.Metadata["orderID"],
-					CustomerID:  session.Metadata["customerID"],
-					Status:      string(stripe.CheckoutSessionPaymentStatusPaid),
-					PaymentLink: session.Metadata["paymentLink"],
-					Items:       items,
-				},
+				Body: entity.NewOrder(
+					session.Metadata["orderID"],
+					session.Metadata["customerID"],
+					string(stripe.CheckoutSessionPaymentStatusPaid),
+					session.Metadata["paymentLink"],
+					items,
+				),
 			})
 		}
 	}

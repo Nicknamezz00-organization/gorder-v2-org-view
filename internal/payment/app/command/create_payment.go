@@ -30,12 +30,15 @@ func (c createPaymentHandler) Handle(ctx context.Context, cmd CreatePayment) (st
 	if err != nil {
 		return "", err
 	}
-	newOrder := &entity.Order{
-		ID:          cmd.Order.ID,
-		CustomerID:  cmd.Order.CustomerID,
-		Status:      "waiting_for_payment",
-		Items:       cmd.Order.Items,
-		PaymentLink: link,
+	newOrder, err := entity.NewValidOrder(
+		cmd.Order.ID,
+		cmd.Order.CustomerID,
+		"waiting_for_payment",
+		link,
+		cmd.Order.Items,
+	)
+	if err != nil {
+		return "", err
 	}
 	err = c.orderGRPC.UpdateOrder(ctx, convertor.NewOrderConvertor().EntityToProto(newOrder))
 	return link, err
