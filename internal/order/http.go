@@ -6,12 +6,12 @@ import (
 	"github.com/Nicknamezz00/gorder-v2/common"
 	client "github.com/Nicknamezz00/gorder-v2/common/client/order"
 	"github.com/Nicknamezz00/gorder-v2/common/consts"
+	"github.com/Nicknamezz00/gorder-v2/common/convertor"
 	"github.com/Nicknamezz00/gorder-v2/common/handler/errors"
 	"github.com/Nicknamezz00/gorder-v2/order/app"
 	"github.com/Nicknamezz00/gorder-v2/order/app/command"
 	"github.com/Nicknamezz00/gorder-v2/order/app/dto"
 	"github.com/Nicknamezz00/gorder-v2/order/app/query"
-	"github.com/Nicknamezz00/gorder-v2/order/convertor"
 	"github.com/gin-gonic/gin"
 )
 
@@ -70,7 +70,13 @@ func (H HTTPServer) GetCustomerCustomerIdOrdersOrderId(c *gin.Context, customerI
 		return
 	}
 
-	resp = convertor.NewOrderConvertor().EntityToClient(o)
+	resp = client.Order{
+		CustomerId:  o.CustomerID,
+		Id:          o.ID,
+		Items:       convertor.NewItemConvertor().EntitiesToClients(o.Items),
+		PaymentLink: o.PaymentLink,
+		Status:      o.Status,
+	}
 }
 
 func (H HTTPServer) validate(req client.CreateOrderRequest) error {

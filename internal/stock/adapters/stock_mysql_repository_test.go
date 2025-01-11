@@ -8,7 +8,7 @@ import (
 	"time"
 
 	_ "github.com/Nicknamezz00/gorder-v2/common/config"
-	"github.com/Nicknamezz00/gorder-v2/stock/entity"
+	"github.com/Nicknamezz00/gorder-v2/common/entity"
 	"github.com/Nicknamezz00/gorder-v2/stock/infrastructure/persistent"
 	"github.com/Nicknamezz00/gorder-v2/stock/infrastructure/persistent/builder"
 	"github.com/spf13/viper"

@@ -3,7 +3,7 @@ package order
 import (
 	"fmt"
 
-	"github.com/Nicknamezz00/gorder-v2/order/entity"
+	"github.com/Nicknamezz00/gorder-v2/common/entity"
 	"github.com/pkg/errors"
 	"github.com/stripe/stripe-go/v80"
 )

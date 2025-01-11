@@ -6,10 +6,10 @@ import (
 	"time"
 
 	"github.com/Nicknamezz00/gorder-v2/common/decorator"
+	"github.com/Nicknamezz00/gorder-v2/common/entity"
 	"github.com/Nicknamezz00/gorder-v2/common/handler/redis"
 	"github.com/Nicknamezz00/gorder-v2/common/logging"
 	domain "github.com/Nicknamezz00/gorder-v2/stock/domain/stock"
-	"github.com/Nicknamezz00/gorder-v2/stock/entity"
 	"github.com/Nicknamezz00/gorder-v2/stock/infrastructure/integration"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"

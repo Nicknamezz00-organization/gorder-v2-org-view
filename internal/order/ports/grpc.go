@@ -3,11 +3,11 @@ package ports
 import (
 	"context"
 
+	"github.com/Nicknamezz00/gorder-v2/common/convertor"
 	"github.com/Nicknamezz00/gorder-v2/common/genproto/orderpb"
 	"github.com/Nicknamezz00/gorder-v2/order/app"
 	"github.com/Nicknamezz00/gorder-v2/order/app/command"
 	"github.com/Nicknamezz00/gorder-v2/order/app/query"
-	"github.com/Nicknamezz00/gorder-v2/order/convertor"
 	domain "github.com/Nicknamezz00/gorder-v2/order/domain/order"
 	"github.com/golang/protobuf/ptypes/empty"
 	"google.golang.org/grpc/codes"
@@ -42,7 +42,14 @@ func (G GRPCServer) GetOrder(ctx context.Context, request *orderpb.GetOrderReque
 	if err != nil {
 		return nil, status.Error(codes.NotFound, err.Error())
 	}
-	return convertor.NewOrderConvertor().EntityToProto(o), nil
+
+	return &orderpb.Order{
+		ID:          o.ID,
+		CustomerID:  o.CustomerID,
+		Status:      o.Status,
+		Items:       convertor.NewItemConvertor().EntitiesToProtos(o.Items),
+		PaymentLink: o.PaymentLink,
+	}, nil
 }
 
 func (G GRPCServer) UpdateOrder(ctx context.Context, request *orderpb.Order) (_ *emptypb.Empty, err error) {

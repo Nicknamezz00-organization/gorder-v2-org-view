@@ -4,8 +4,8 @@ import (
 	"context"
 	"sync"
 
+	"github.com/Nicknamezz00/gorder-v2/common/entity"
 	domain "github.com/Nicknamezz00/gorder-v2/stock/domain/stock"
-	"github.com/Nicknamezz00/gorder-v2/stock/entity"
 )
 
 type MemoryStockRepository struct {

@@ -3,11 +3,11 @@ package domain
 import (
 	"context"
 
-	"github.com/Nicknamezz00/gorder-v2/common/genproto/orderpb"
+	"github.com/Nicknamezz00/gorder-v2/common/entity"
 )
 
 type Processor interface {
-	CreatePaymentLink(context.Context, *orderpb.Order) (string, error)
+	CreatePaymentLink(context.Context, *entity.Order) (string, error)
 }
 
 type Order struct {
@@ -15,5 +15,5 @@ type Order struct {
 	CustomerID  string
 	Status      string
 	PaymentLink string
-	Items       []*orderpb.Item
+	Items       []*entity.Item
 }
