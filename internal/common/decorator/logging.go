@@ -6,26 +6,26 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/Nicknamezz00/gorder-v2/common/logging"
 	"github.com/sirupsen/logrus"
 )
 
 type queryLoggingDecorator[C, R any] struct {
-	logger *logrus.Entry
+	logger *logrus.Logger
 	base   QueryHandler[C, R]
 }
 
 func (q queryLoggingDecorator[C, R]) Handle(ctx context.Context, cmd C) (result R, err error) {
 	body, _ := json.Marshal(cmd)
-	logger := q.logger.WithFields(logrus.Fields{
+	fields := logrus.Fields{
 		"query":      generateActionName(cmd),
 		"query_body": string(body),
-	})
-	logger.Debug("Executing query")
+	}
 	defer func() {
 		if err == nil {
-			logger.Info("Query execute successfully")
+			logging.Infof(ctx, fields, "%s", "Query execute successfully")
 		} else {
-			logger.Error("Failed to execute query", err)
+			logging.Errorf(ctx, fields, "Failed to execute query, err=%v", err)
 		}
 	}()
 	result, err = q.base.Handle(ctx, cmd)
@@ -33,22 +33,21 @@ func (q queryLoggingDecorator[C, R]) Handle(ctx context.Context, cmd C) (result 
 }
 
 type commandLoggingDecorator[C, R any] struct {
-	logger *logrus.Entry
+	logger *logrus.Logger
 	base   CommandHandler[C, R]
 }
 
 func (q commandLoggingDecorator[C, R]) Handle(ctx context.Context, cmd C) (result R, err error) {
 	body, _ := json.Marshal(cmd)
-	logger := q.logger.WithFields(logrus.Fields{
+	fields := logrus.Fields{
 		"command":      generateActionName(cmd),
 		"command_body": string(body),
-	})
-	logger.Debug("Executing command")
+	}
 	defer func() {
 		if err == nil {
-			logger.Info("Command execute successfully")
+			logging.Infof(ctx, fields, "%s", "Query execute successfully")
 		} else {
-			logger.Error("Failed to execute command", err)
+			logging.Errorf(ctx, fields, "Failed to execute query, err=%v", err)
 		}
 	}()
 	result, err = q.base.Handle(ctx, cmd)

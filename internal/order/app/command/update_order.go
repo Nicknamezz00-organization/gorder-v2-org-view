@@ -21,11 +21,7 @@ type updateOrderHandler struct {
 	//stockGRPC
 }
 
-func NewUpdateOrderHandler(
-	orderRepo domain.Repository,
-	logger *logrus.Entry,
-	metricClient decorator.MetricsClient,
-) UpdateOrderHandler {
+func NewUpdateOrderHandler(orderRepo domain.Repository, logger *logrus.Logger, metricClient decorator.MetricsClient) UpdateOrderHandler {
 	if orderRepo == nil {
 		panic("nil orderRepo")
 	}

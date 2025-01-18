@@ -47,7 +47,7 @@ func (c createPaymentHandler) Handle(ctx context.Context, cmd CreatePayment) (st
 func NewCreatePaymentHandler(
 	processor domain.Processor,
 	orderGRPC OrderService,
-	logger *logrus.Entry,
+	logger *logrus.Logger,
 	metricClient decorator.MetricsClient,
 ) CreatePaymentHandler {
 	return decorator.ApplyCommandDecorators[CreatePayment, string](

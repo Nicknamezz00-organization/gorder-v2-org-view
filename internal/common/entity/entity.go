@@ -56,7 +56,13 @@ func (iq ItemWithQuantity) validate() error {
 	if iq.ID == "" {
 		invalidFields = append(invalidFields, "ID")
 	}
-	return errors.New(strings.Join(invalidFields, ","))
+	if iq.Quantity < 0 {
+		invalidFields = append(invalidFields, "Quantity")
+	}
+	if len(invalidFields) > 0 {
+		return errors.New(strings.Join(invalidFields, ","))
+	}
+	return nil
 }
 
 func NewItemWithQuantity(ID string, quantity int32) *ItemWithQuantity {

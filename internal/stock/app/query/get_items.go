@@ -21,7 +21,7 @@ type getItemsHandler struct {
 
 func NewGetItemsHandler(
 	stockRepo domain.Repository,
-	logger *logrus.Entry,
+	logger *logrus.Logger,
 	metricClient decorator.MetricsClient,
 ) GetItemsHandler {
 	if stockRepo == nil {
